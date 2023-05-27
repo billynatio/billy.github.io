@@ -1,6 +1,10 @@
+from time import time
 import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
+from pyinsane2 import scanner
+from pyPDF2 import PdfWriter
+
 
 def submit_form():
     # Mendapatkan nilai input dari field
@@ -10,33 +14,41 @@ def submit_form():
     digipos = entry_digipos.get()
     user = entry_user.get()
     jumlah_voucher = entry_jumlah_voucher.get()
-    
-    # Validasi input tidak kosong
-    if not nama_voucher or not kode_voucher or not harga or not digipos or not user or not jumlah_voucher:
-        messagebox.showerror("Error", "Semua field harus diisi!")
-        return
-
-    # Validasi input harga dan jumlah voucher
-    if not harga.isdigit() or not jumlah_voucher.isdigit():
-        messagebox.showerror("Error", "Harga dan Jumlah Voucher harus berisi angka!")
-        return
-
-    # Konversi harga dan jumlah voucher ke tipe data integer
-    harga = int(harga)
-    jumlah_voucher = int(jumlah_voucher)
 
     # Menampilkan nilai input
     print("Nama Voucher:", nama_voucher)
     print("Kode Voucher:", kode_voucher)
     print("Harga:", harga)
     print("Digipos:", digipos)
-    print("User:", user)
     print("Jumlah Voucher:", jumlah_voucher)
+    print("User:", user)
+    print("Waktu:", waktu_sekarang)
+
+    # Cek field yang belum diisi
+    empty_fields = []
+    if not nama_voucher:
+        empty_fields.append("Nama Voucher")
+    if not kode_voucher:
+        empty_fields.append("Kode Voucher")
+    if not harga:
+        empty_fields.append("Harga")
+    if not digipos:
+        empty_fields.append("Digipos")
+    if not user:
+        empty_fields.append("User")
+    if not jumlah_voucher:
+        empty_fields.append("Jumlah Voucher")
+
+    # Jika ada field yang belum diisi, tampilkan peringatan
+    if empty_fields:
+        empty_fields_text = ", ".join(empty_fields)
+        messagebox.showerror("Peringatan", f"{empty_fields_text} belum diisi!")
+        return
 
     # Menampilkan kotak dialog pesan konfirmasi
     confirm = messagebox.askyesno("Konfirmasi", "Apakah data sudah benar?")
     if confirm:
-         # Mengosongkan field input
+        # Mengosongkan field input
         entry_nama_voucher.delete(0, tk.END)
         entry_kode_voucher.delete(0, tk.END)
         entry_harga.delete(0, tk.END)
@@ -44,6 +56,20 @@ def submit_form():
         entry_user.delete(0, tk.END)
         entry_jumlah_voucher.delete(0, tk.END)
         messagebox.showinfo("Konfirmasi", "Data berhasil disimpan!")
+         
+         # Menjalankan pemindaian
+        scanner = Scanner()
+        devices = scanner.scan_devices()
+        if len(devices) > 0:
+            device = devices[0]
+            with device:
+                image = device.scan()
+                filename = f"{nama_voucher}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pdf"
+                save_path = os.path.join("C:\\Users\\Asus\\Desktop\\voucher yang discan\\", filename)
+                image.save(save_path, 'PDF')
+                print("File berhasil disimpan:", save_path)
+        else:
+            print("Tidak ada pemindai yang ditemukan.")
     else:
         return
 
@@ -54,6 +80,24 @@ def validate_numeric_input(event):
     # Memeriksa apakah karakter adalah angka atau backspace
     if not char.isdigit() and char != '\b':
         return "break"  # Membatalkan input karakter
+
+def validate_fields():
+    # Mendapatkan nilai input dari setiap field
+    nama_voucher = entry_nama_voucher.get()
+    kode_voucher = entry_kode_voucher.get()
+    harga = entry_harga.get()
+    digipos = entry_digipos.get()
+    user = entry_user.get()
+    jumlah_voucher = entry_jumlah_voucher.get()
+
+    # Validasi field harga dan jumlah voucher hanya jika keduanya telah terisi
+    if harga and jumlah_voucher:
+        # Validasi input harga dan jumlah voucher
+        if not harga.isdigit() or not jumlah_voucher.isdigit():
+            return False
+
+    # Kembalikan True jika semua field telah terisi dan validasi angka berhasil, False jika ada yang kosong atau tidak valid
+    return all([nama_voucher, kode_voucher, harga, digipos, user, jumlah_voucher])
 
 # Membuat window Tkinter
 window = tk.Tk()
