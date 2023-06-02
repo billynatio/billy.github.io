@@ -18,10 +18,12 @@ def run_epson_scan(kode_voucher, waktu_sekarang):
 
     # Sembunyikan jendela Epson Scan
     window_epson.set_visible(False)
+    print("epson sudah dbuka")
 
     # Klik tombol "Customize"
     button_customize = window_epson.child_window(title="Customize...", control_type="Button")
     button_customize.click()
+    print("customize sudah dbuka")
 
     # Tunggu hingga dialog "Customize" muncul
     window_customize = window_epson.window(title="Customize")
@@ -128,7 +130,7 @@ def submit_form():
         kode_voucher = entry_kode_voucher.get()
         waktu_sekarang = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
         Desktop(backend="uia").start(run_epson_scan, args=(kode_voucher, waktu_sekarang))
-        time.sleep(1)  # Tunggu sebentar agar Epson Scan dapat dijalankan
+        time.sleep(2)  # Tunggu sebentar agar Epson Scan dapat dijalankan
 
     else:
         return
