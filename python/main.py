@@ -2,10 +2,24 @@ import os
 from datetime import datetime
 import tkinter as tk
 from tkinter import messagebox
+from turtle import title
 from pywinauto import Application, Desktop
 import time
 
-vch_folder_path = r"C:\Users\cahayabaru\Desktop\voucher scan\automation"
+
+CLIENT_SECRET_FILE = ("credentials.json")
+SCOPES = ["https://www.googleapis.com/auth/drive",
+          "https://www.googleapis.com/auth/documents",]
+
+# service api
+service_drive = Create_Service(CLIENT_SECRET_FILE, "drive", "v3", "https://www.googleapis.com/auth/drive")
+service_doc = Create_Service(CLIENT_SECRET_FILE,"docs", "v1",["https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/documents"],)
+
+# Define the paths for scanned voucher, exported text file, and filtered text file
+vch_folder_path = r"C:\Users\cahayabaru\Desktop\voucher_scan\automation"
+pdf_path = 
+txt_path = os.path.join(vch_folder_path, "exported_text.txt")
+filtered_text_path = os.path.join(vch_folder_path, "filtered_text.txt")
 
 def run_epson_scan(kode_voucher, waktu_sekarang):
     try:
@@ -15,15 +29,11 @@ def run_epson_scan(kode_voucher, waktu_sekarang):
         # Tunggu hingga jendela Epson Scan muncul
         window_epson = app_epson.window(title="EPSON Scan")
         window_epson.wait("exists", timeout=10)
-
-        # Sembunyikan jendela Epson Scan
-        window_epson.set_visible(False)
-        print("Epson sudah dibuka")
+        print("-Membuka epson scanner!")
 
         # Klik tombol "Customize"
         button_customize = window_epson.child_window(title="Customize...", control_type="Button")
         button_customize.click()
-        print("Customize sudah dibuka")
 
         # Tunggu hingga dialog "Customize" muncul
         window_customize = window_epson.window(title="Customize")
@@ -38,16 +48,13 @@ def run_epson_scan(kode_voucher, waktu_sekarang):
         window_save_settings.wait("exists", timeout=10)
 
         # Tetapkan nama awalan sebagai kode voucher dan waktu saat ini
-        prefix_name = kode_voucher + " " + waktu_sekarang.strftime("%d_%m_%Y %H-%M") + " "
+        prefix_name = kode_voucher + " " + waktu_sekarang.replace(" ", "_").replace(":", "-") + " "
         edit_prefix = window_save_settings.child_window(auto_id="1202", control_type="Edit")
         edit_prefix.set_text(prefix_name)
 
         # Tetapkan nomor awal sebagai "888"
         edit_start_number = window_save_settings.child_window(title="Start Number:", control_type="Edit")
         edit_start_number.set_text("888")
-
-        # Dapatkan nama file
-        file_path = os.path.join(vch_folder_path, prefix_name + "888.pdf")
 
         # Klik tombol "OK" dalam dialog "Save Settings"
         button_ok_save_settings = window_save_settings.child_window(title="OK", control_type="Button")
@@ -60,22 +67,30 @@ def run_epson_scan(kode_voucher, waktu_sekarang):
         # Klik tombol "Scan" dalam jendela Epson Scan
         button_scan = window_epson.child_window(title="Scan", control_type="Button")
         button_scan.click()
+        print("_Proses scanning sedang berjalan")
 
         # Tunggu hingga pemindaian selesai
         window_epson.wait_not("exists", timeout=60)
 
+        # Dapatkan nama file
+        file_path = os.path.join(vch_folder_path, prefix_name + "888.pdf")
+        # Buat nama file baru
+        final_vch_path = os.path.join(vch_folder_path, prefix_name + ".pdf")
+
         # Periksa apakah file yang dipindai ada
         if os.path.exists(file_path):
             # Ubah nama path file tanpa "888" dan dengan ekstensi ".pdf"
-            vch_path = file_path.replace(" 888", ".pdf")
-            os.rename(file_path, vch_path)
-            return vch_path
+            os.rename(file_path, final_vch_path)
+            print("- Berhasil mengubah nama file")
+            return final_vch_path
         else:
             return None
 
     except Exception as e:
         print("Kesalahan saat menjalankan Epson Scan:", str(e))
         return None
+    
+
 
 def submit_form():
     # Mendapatkan nilai input dari field
@@ -85,6 +100,7 @@ def submit_form():
     digipos = entry_digipos.get()
     user = entry_user.get()
     jumlah_voucher = entry_jumlah_voucher.get()
+    waktu_sekarang = datetime.now().strftime("%d-%m-%Y %H:%M")
 
     # Menampilkan nilai input
     print("Nama Voucher:", nama_voucher)
@@ -93,9 +109,6 @@ def submit_form():
     print("Digipos:", digipos)
     print("Jumlah Voucher:", jumlah_voucher)
     print("User:", user)
-
-    # Mendapatkan waktu sekarang
-    waktu_sekarang = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     print("Waktu:", waktu_sekarang)
 
     # Cek field yang belum diisi
@@ -122,6 +135,11 @@ def submit_form():
     # Menampilkan kotak dialog pesan konfirmasi
     confirm = messagebox.askyesno("Konfirmasi", "Apakah data sudah benar?")
     if confirm:
+        # Panggil fungsi run_epson_scan di latar belakang
+        kode_voucher = entry_kode_voucher.get()
+        run_epson_scan(kode_voucher, waktu_sekarang)
+        time.sleep(2)  # Tunggu sebentar agar Epson Scan dapat dijalankan
+        
         # Mengosongkan field input
         entry_nama_voucher.delete(0, tk.END)
         entry_kode_voucher.delete(0, tk.END)
@@ -129,12 +147,6 @@ def submit_form():
         entry_digipos.delete(0, tk.END)
         entry_user.delete(0, tk.END)
         entry_jumlah_voucher.delete(0, tk.END)
-
-        # Panggil fungsi run_epson_scan di latar belakang
-        kode_voucher = entry_kode_voucher.get()
-        waktu_sekarang = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-        run_epson_scan(kode_voucher, waktu_sekarang)
-        time.sleep(2)  # Tunggu sebentar agar Epson Scan dapat dijalankan
 
     else:
         return
@@ -174,50 +186,54 @@ window.title("Form Voucher")
 
 # Membuat label dan field untuk Nama Voucher
 label_nama_voucher = tk.Label(window, text="Nama Voucher:")
-label_nama_voucher.grid(row=0, column=0, padx=10, pady=5)
+label_nama_voucher.grid(row=0, column=0, sticky="W")
 entry_nama_voucher = tk.Entry(window)
-entry_nama_voucher.grid(row=0, column=1, padx=10, pady=5)
+entry_nama_voucher.grid(row=0, column=1)
 
 # Membuat label dan field untuk Kode Voucher
 label_kode_voucher = tk.Label(window, text="Kode Voucher:")
-label_kode_voucher.grid(row=1, column=0, padx=10, pady=5)
+label_kode_voucher.grid(row=1, column=0, sticky="W")
 entry_kode_voucher = tk.Entry(window)
-entry_kode_voucher.grid(row=1, column=1, padx=10, pady=5)
+entry_kode_voucher.grid(row=1, column=1)
 
 # Membuat label dan field untuk Harga
 label_harga = tk.Label(window, text="Harga:")
-label_harga.grid(row=2, column=0, padx=10, pady=5)
+label_harga.grid(row=2, column=0, sticky="W")
 entry_harga = tk.Entry(window)
-entry_harga.grid(row=2, column=1, padx=10, pady=5)
+entry_harga.grid(row=2, column=1)
+entry_harga.bind("<KeyPress>", validate_numeric_input)
+
+# Membuat label dan field untuk Jumlah_voucher
+label_jumlah_voucher = tk.Label(window, text="Jumlah Voucher:")
+label_jumlah_voucher.grid(row=3, column=0, sticky="W")
+entry_jumlah_voucher = tk.Entry(window)
+entry_jumlah_voucher.grid(row=3, column=1)
+entry_jumlah_voucher.bind("<KeyPress>", validate_numeric_input)
 
 # Membuat label dan field untuk Digipos
 label_digipos = tk.Label(window, text="Digipos:")
-label_digipos.grid(row=3, column=0, padx=10, pady=5)
+label_digipos.grid(row=4, column=0, sticky="W")
 entry_digipos = tk.Entry(window)
-entry_digipos.grid(row=3, column=1, padx=10, pady=5)
+entry_digipos.grid(row=4, column=1)
 
 # Membuat label dan field untuk User
 label_user = tk.Label(window, text="User:")
-label_user.grid(row=4, column=0, padx=10, pady=5)
+label_user.grid(row=5, column=0, sticky="W")
 entry_user = tk.Entry(window)
-entry_user.grid(row=4, column=1, padx=10, pady=5)
+entry_user.grid(row=5, column=1)
 
-# Membuat label dan field untuk Jumlah Voucher
-label_jumlah_voucher = tk.Label(window, text="Jumlah Voucher:")
-label_jumlah_voucher.grid(row=5, column=0, padx=10, pady=5)
-entry_jumlah_voucher = tk.Entry(window)
-entry_jumlah_voucher.grid(row=5, column=1, padx=10, pady=5)
+# Mendapatkan waktu sekarang
+waktu_sekarang = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
-# Membuat tombol Submit
-button_submit = tk.Button(window, text="Submit", command=submit_form)
-button_submit.grid(row=6, column=0, columnspan=2, padx=10, pady=5)
+# Membuat label untuk waktu sekarang di sudut kanan bawah
+label_waktu = tk.Label(window, text=waktu_sekarang)
+label_waktu.grid(row=7, column=1, sticky="SE")
 
-# Menambahkan event handler untuk membatasi input karakter pada field harga dan jumlah voucher
-entry_harga.bind("<KeyPress>", validate_numeric_input)
-entry_jumlah_voucher.bind("<KeyPress>", validate_numeric_input)
+# Membuat tombol Simpan
+button_simpan = tk.Button(
+    window, text="Simpan", command=lambda: validate_fields() and submit_form()
+)
+button_simpan.grid(row=6, column=0, sticky="W")
 
-# Menambahkan event handler untuk memvalidasi field sebelum submit
-window.bind("<Return>", lambda event: validate_fields() and submit_form())
-
-# Menjalankan event loop window Tkinter
+# Menjalankan event loop Tkinter
 window.mainloop()
