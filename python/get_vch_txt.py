@@ -15,11 +15,11 @@ service_drive = Create_Service(CLIENT_SECRET_FILE, "drive", "v3", "https://www.g
 service_doc = Create_Service(CLIENT_SECRET_FILE,"docs", "v1",["https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/documents"],)
 
 # lokasi hasil scan voucher
-pdf_path = r"C:\Users\Asus\Downloads\img251.pdf"
+pdf_path = r"C:\Users\Billy\Downloads\img284.pdf"
 # lokasi export txt file
-txt_path = r"C:\Users\Asus\Downloads\img251.txt"
+txt_path = r"C:\Users\Billy\Downloads\img284.txt"
 # Lokasi txt file sudah difilter
-filtered_text_path = r"C:\Users\Asus\Downloads\img251.pdf"
+filtered_text_path = r"C:\Users\Billy\Downloads\img284.txt"
 
 # Fungsi untuk mengonversi file PDF menjadi Google Docs (GDoc)
 def convert_pdf_to_txt(pdf_path: str, parents: list = None):

@@ -2,8 +2,9 @@ import os
 from datetime import datetime
 import tkinter as tk
 from tkinter import messagebox
-from pyinsane2 import Scanner
-from pyPDF2 import PdfWriter
+from turtle import title
+from pywinauto import Application, Desktop
+import time
 
 
 def submit_form():
@@ -22,7 +23,7 @@ def submit_form():
     print("Digipos:", digipos)
     print("Jumlah Voucher:", jumlah_voucher)
     print("User:", user)
-    
+
     # Mendapatkan waktu sekarang
     waktu_sekarang = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     print("Waktu:", waktu_sekarang)
@@ -59,21 +60,54 @@ def submit_form():
         entry_user.delete(0, tk.END)
         entry_jumlah_voucher.delete(0, tk.END)
 
-        messagebox.showinfo("Konfirmasi", "Data berhasil disimpan!")
+        # Start the Epson Scan application
+        app_epson = Application(backend="uia").start(r"C:\Windows\twain_32\escndv\escndv.exe")
 
-        # # Menjalankan pemindaian
-        # scanner = Scanner()
-        # devices = scanner.scan_devices()
-        # if len(devices) > 0:
-        #     device = devices[0]
-        #     with device:
-        #         image = device.scan()
-        #         filename = f"{nama_voucher}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pdf"
-        #         save_path = os.path.join("C:\\Users\\Asus\\Desktop\\voucher_yang_discan", filename)
-        #         image.save(save_path, 'PDF')
-        #         print("File berhasil disimpan:", save_path)
-        # else:
-        #     print("Tidak ada pemindai yang ditemukan.")
+        # Wait for the Epson Scan window to appear
+        window_epson = app_epson.window(title="EPSON Scan")
+        window_epson.wait("exists", timeout=10)  # Adjust the timeout as needed
+
+        # Activate the Epson Scan window
+        window_epson.set_focus()
+
+        # Click the "Customize" button
+        button_customize = window_epson.child_window(title="Customize...", control_type="Button")
+        button_customize.click()
+
+        # Wait for the "Customize" dialog to appear
+        window_customize = window_epson.window(title="Customize")
+        window_customize.wait("exists", timeout=10)  # Adjust the timeout as needed
+
+        # Click the "File Save Settings" button in the "Customize" dialog
+        button_file_save_settings = window_customize.child_window(auto_id="1080", control_type="Button")
+        button_file_save_settings.click()
+
+        # Wait for the "Save Settings" dialog to appear
+        window_save_settings = window_epson.window(title="File Save Settings")
+        window_save_settings.wait("exists", timeout=10)  # Adjust the timeout as needed
+
+        # Set the prefix name to the code voucher and current time
+        prefix_name = kode_voucher + "_" + waktu_sekarang.replace(" ", "_").replace(":", "-") +"/"
+        edit_prefix = window_save_settings.child_window(auto_id="1202", control_type="Edit")
+        edit_prefix.set_text(prefix_name)
+
+
+        # Set the start number to "888"
+        edit_start_number = window_save_settings.child_window(title="Start Number:", control_type="Edit")
+        edit_start_number.set_text("888")
+
+        # Click the "OK" button in the "Save Settings" dialog
+        button_ok_save_settings = window_save_settings.child_window(title="OK", control_type="Button")
+        button_ok_save_settings.click()
+
+        # Click the "OK" button in the "Customize" dialog
+        button_ok_customize = window_customize.child_window(title="OK", control_type="Button")
+        button_ok_customize.click()
+
+        # Click the "Scan" button in the Epson Scan window
+        button_scan = window_epson.child_window(title="Scan", control_type="Button")
+        button_scan.click()
+
     else:
         return
 
@@ -83,7 +117,7 @@ def validate_numeric_input(event):
     char = event.char
 
     # Memeriksa apakah karakter adalah angka atau backspace
-    if not char.isdigit() and char != '\b':
+    if not char.isdigit() and char != "\b":
         return "break"  # Membatalkan input karakter
 
 
@@ -156,7 +190,9 @@ label_waktu = tk.Label(window, text=waktu_sekarang)
 label_waktu.grid(row=7, column=1, sticky="SE")
 
 # Membuat tombol Simpan
-button_simpan = tk.Button(window, text="Simpan", command=lambda: validate_fields() and submit_form())
+button_simpan = tk.Button(
+    window, text="Simpan", command=lambda: validate_fields() and submit_form()
+)
 button_simpan.grid(row=6, column=0, sticky="W")
 
 # Menjalankan event loop Tkinter
