@@ -1,7 +1,7 @@
 from pywinauto import Application, Desktop
 import time
 
-def epson_scan():
+def run_epson_scan(kode_voucher, waktu_sekarang):
     # Start the Epson Scan application
     app_epson = Application(backend="uia").start(r"C:\Windows\twain_32\escndv\escndv.exe")
 
@@ -9,8 +9,8 @@ def epson_scan():
     window_epson = app_epson.window(title="EPSON Scan")
     window_epson.wait("exists", timeout=10)  # Adjust the timeout as needed
 
-    # Activate the Epson Scan window
-    window_epson.set_focus()
+    # Hide the Epson Scan window
+    window_epson.set_visible(False)
 
     # Click the "Customize" button
     button_customize = window_epson.child_window(title="Customize...", control_type="Button")
@@ -28,13 +28,14 @@ def epson_scan():
     window_save_settings = window_epson.window(title="File Save Settings")
     window_save_settings.wait("exists", timeout=10)  # Adjust the timeout as needed
 
-    # Set the prefix name to "billy"
+    # Set the prefix name to the code voucher and current time
+    prefix_name = kode_voucher + "_" + waktu_sekarang.replace(" ", "_").replace(":", "-") + "/"
     edit_prefix = window_save_settings.child_window(auto_id="1202", control_type="Edit")
-    edit_prefix.set_text("billy")
+    edit_prefix.set_text(prefix_name)
 
-    # Set the start number to "001"
+    # Set the start number to "888"
     edit_start_number = window_save_settings.child_window(title="Start Number:", control_type="Edit")
-    edit_start_number.set_text("001")
+    edit_start_number.set_text("888")
 
     # Click the "OK" button in the "Save Settings" dialog
     button_ok_save_settings = window_save_settings.child_window(title="OK", control_type="Button")
@@ -47,5 +48,3 @@ def epson_scan():
     # Click the "Scan" button in the Epson Scan window
     button_scan = window_epson.child_window(title="Scan", control_type="Button")
     button_scan.click()
-
-epson_scan()

@@ -6,54 +6,70 @@ from turtle import title
 from pywinauto import Application, Desktop
 import time
 
+vch_folder_path = r"C:\Users\cahayabaru\Desktop\voucher scan\automation"
 
 def run_epson_scan(kode_voucher, waktu_sekarang):
-    # Start the Epson Scan application
+    # Mulai aplikasi Epson Scan
     app_epson = Application(backend="uia").start(r"C:\Windows\twain_32\escndv\escndv.exe")
 
-    # Wait for the Epson Scan window to appear
+    # Tunggu hingga jendela Epson Scan muncul
     window_epson = app_epson.window(title="EPSON Scan")
-    window_epson.wait("exists", timeout=10)  # Adjust the timeout as needed
+    window_epson.wait("exists", timeout=10)  # Sesuaikan waktu tunggu jika diperlukan
 
-    # Hide the Epson Scan window
+    # Sembunyikan jendela Epson Scan
     window_epson.set_visible(False)
 
-    # Click the "Customize" button
+    # Klik tombol "Customize"
     button_customize = window_epson.child_window(title="Customize...", control_type="Button")
     button_customize.click()
 
-    # Wait for the "Customize" dialog to appear
+    # Tunggu hingga dialog "Customize" muncul
     window_customize = window_epson.window(title="Customize")
-    window_customize.wait("exists", timeout=10)  # Adjust the timeout as needed
+    window_customize.wait("exists", timeout=10)  # Sesuaikan waktu tunggu jika diperlukan
 
-    # Click the "File Save Settings" button in the "Customize" dialog
+    # Klik tombol "File Save Settings" dalam dialog "Customize"
     button_file_save_settings = window_customize.child_window(auto_id="1080", control_type="Button")
     button_file_save_settings.click()
 
-    # Wait for the "Save Settings" dialog to appear
+    # Tunggu hingga dialog "Save Settings" muncul
     window_save_settings = window_epson.window(title="File Save Settings")
-    window_save_settings.wait("exists", timeout=10)  # Adjust the timeout as needed
+    window_save_settings.wait("exists", timeout=10)  # Sesuaikan waktu tunggu jika diperlukan
 
-    # Set the prefix name to the code voucher and current time
-    prefix_name = kode_voucher + "_" + waktu_sekarang.replace(" ", "_").replace(":", "-") + "/"
+    # Tetapkan nama awalan sebagai kode voucher dan waktu saat ini
+    prefix_name = kode_voucher + " " + waktu_sekarang.strftime("%d_%m_%Y %H-%M") + " "
     edit_prefix = window_save_settings.child_window(auto_id="1202", control_type="Edit")
     edit_prefix.set_text(prefix_name)
 
-    # Set the start number to "888"
+    # Tetapkan nomor awal sebagai "888"
     edit_start_number = window_save_settings.child_window(title="Start Number:", control_type="Edit")
     edit_start_number.set_text("888")
+    
+    # Dapatkan nama file
+    file_path = vch_folder_path + prefix_name + " 888.pdf"
 
-    # Click the "OK" button in the "Save Settings" dialog
+    # Klik tombol "OK" dalam dialog "Save Settings"
     button_ok_save_settings = window_save_settings.child_window(title="OK", control_type="Button")
     button_ok_save_settings.click()
 
-    # Click the "OK" button in the "Customize" dialog
+    # Klik tombol "OK" dalam dialog "Customize"
     button_ok_customize = window_customize.child_window(title="OK", control_type="Button")
     button_ok_customize.click()
 
-    # Click the "Scan" button in the Epson Scan window
+    # Klik tombol "Scan" dalam jendela Epson Scan
     button_scan = window_epson.child_window(title="Scan", control_type="Button")
     button_scan.click()
+    
+    # Tunggu hingga pemindaian selesai
+    window_epson.wait_not("exists", timeout=60)  # Sesuaikan waktu tunggu jika diperlukan
+    
+    # Periksa apakah file yang dipindai ada
+    if os.path.exists(file_path):
+        # Ubah nama path file tanpa " 888" dan dengan ekstensi ".pdf"
+        vch_path = file_path.replace(" 888", ".pdf")
+        os.rename(file_path, vch_path)
+        return vch_path
+    else:
+        return None
 
 def submit_form():
     # Mendapatkan nilai input dari field
