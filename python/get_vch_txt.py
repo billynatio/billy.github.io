@@ -1,12 +1,6 @@
 from mimetypes import MimeTypes
 import os
-import subprocess
-import pyperclip
-import re
-import time
 import pydrive2
-from lib2to3.pytree import convert
-from uu import encode
 from Google import Create_Service
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload

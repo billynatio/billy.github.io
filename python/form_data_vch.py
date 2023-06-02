@@ -1,8 +1,8 @@
-from time import time
+import os
+from datetime import datetime
 import tkinter as tk
 from tkinter import messagebox
-from datetime import datetime
-from pyinsane2 import scanner
+from pyinsane2 import Scanner
 from pyPDF2 import PdfWriter
 
 
@@ -22,6 +22,9 @@ def submit_form():
     print("Digipos:", digipos)
     print("Jumlah Voucher:", jumlah_voucher)
     print("User:", user)
+    
+    # Mendapatkan waktu sekarang
+    waktu_sekarang = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     print("Waktu:", waktu_sekarang)
 
     # Cek field yang belum diisi
@@ -55,23 +58,25 @@ def submit_form():
         entry_digipos.delete(0, tk.END)
         entry_user.delete(0, tk.END)
         entry_jumlah_voucher.delete(0, tk.END)
+
         messagebox.showinfo("Konfirmasi", "Data berhasil disimpan!")
-         
-         # Menjalankan pemindaian
-        scanner = Scanner()
-        devices = scanner.scan_devices()
-        if len(devices) > 0:
-            device = devices[0]
-            with device:
-                image = device.scan()
-                filename = f"{nama_voucher}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pdf"
-                save_path = os.path.join("C:\\Users\\Asus\\Desktop\\voucher yang discan\\", filename)
-                image.save(save_path, 'PDF')
-                print("File berhasil disimpan:", save_path)
-        else:
-            print("Tidak ada pemindai yang ditemukan.")
+
+        # # Menjalankan pemindaian
+        # scanner = Scanner()
+        # devices = scanner.scan_devices()
+        # if len(devices) > 0:
+        #     device = devices[0]
+        #     with device:
+        #         image = device.scan()
+        #         filename = f"{nama_voucher}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pdf"
+        #         save_path = os.path.join("C:\\Users\\Asus\\Desktop\\voucher_yang_discan", filename)
+        #         image.save(save_path, 'PDF')
+        #         print("File berhasil disimpan:", save_path)
+        # else:
+        #     print("Tidak ada pemindai yang ditemukan.")
     else:
         return
+
 
 def validate_numeric_input(event):
     # Mendapatkan karakter yang diinputkan
@@ -80,6 +85,7 @@ def validate_numeric_input(event):
     # Memeriksa apakah karakter adalah angka atau backspace
     if not char.isdigit() and char != '\b':
         return "break"  # Membatalkan input karakter
+
 
 def validate_fields():
     # Mendapatkan nilai input dari setiap field
@@ -98,6 +104,7 @@ def validate_fields():
 
     # Kembalikan True jika semua field telah terisi dan validasi angka berhasil, False jika ada yang kosong atau tidak valid
     return all([nama_voucher, kode_voucher, harga, digipos, user, jumlah_voucher])
+
 
 # Membuat window Tkinter
 window = tk.Tk()
@@ -149,7 +156,7 @@ label_waktu = tk.Label(window, text=waktu_sekarang)
 label_waktu.grid(row=7, column=1, sticky="SE")
 
 # Membuat tombol Simpan
-button_simpan = tk.Button(window, text="Simpan", command=submit_form)
+button_simpan = tk.Button(window, text="Simpan", command=lambda: validate_fields() and submit_form())
 button_simpan.grid(row=6, column=0, sticky="W")
 
 # Menjalankan event loop Tkinter

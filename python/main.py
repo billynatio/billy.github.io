@@ -1,25 +1,25 @@
 from mimetypes import MimeTypes
 import os
-import subprocess
-import pyperclip
-import pyautogui
-import re
-import time
 import pydrive2
-from lib2to3.pytree import convert
-from uu import encode
 from Google import Create_Service
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2 import service_account
 
-CLIENT_SECRET_FILE = (r"C:\Users\Billy\Desktop\visual studio koding\latihan\python\credentials.json")
+CLIENT_SECRET_FILE = ("credentials.json")
 SCOPES = ["https://www.googleapis.com/auth/drive",
           "https://www.googleapis.com/auth/documents",]
 
 # service api
 service_drive = Create_Service(CLIENT_SECRET_FILE, "drive", "v3", "https://www.googleapis.com/auth/drive")
 service_doc = Create_Service(CLIENT_SECRET_FILE,"docs", "v1",["https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/documents"],)
+
+# lokasi hasil scan voucher
+pdf_path = r"C:\Users\Billy\Downloads\img274.pdf"
+# lokasi export txt file
+txt_path = r"C:\Users\Billy\Downloads\img274.txt"
+# Lokasi txt file sudah difilter
+filtered_text_path = r"C:\Users\Billy\Downloads\img274.txt"
 
 # Fungsi untuk mengonversi file PDF menjadi Google Docs (GDoc)
 def convert_pdf_to_txt(pdf_path: str, parents: list = None):
@@ -63,7 +63,6 @@ def convert_pdf_to_txt(pdf_path: str, parents: list = None):
         f.close()
     return gdoc_file_id
 
-import os
 
 def filter_text(txt_path: str):
     # Membaca file teks
@@ -86,15 +85,6 @@ def filter_text(txt_path: str):
     # Mengganti file asli dengan file yang telah difilter
     os.remove(txt_path)
     os.rename(temp_path, txt_path)
-
-        
-# lokasi hasil scan voucher
-pdf_path = r"C:\Users\Billy\Downloads\img251.pdf"
-# lokasi export txt file
-txt_path = r"C:\Users\Billy\Desktop\Datanotepad\hasil.txt"
-# Lokasi txt file sudah difilter
-filtered_text_path = r"C:\Users\Billy\Desktop\Datanotepad\filtered_text.txt"
-
 
 # Konversi PDF menjadi GDoc
 convert_pdf_to_txt(pdf_path, txt_path)
