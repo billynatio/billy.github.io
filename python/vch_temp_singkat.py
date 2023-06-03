@@ -72,6 +72,19 @@ def vch_txt(pdf_path: str, txt_path: str):
         # Ganti file asli dengan file yang telah difilter
         os.remove(txt_path)
         os.rename(temp_path, txt_path)
+        
+        # Create the template using the filtered data
+        template = "{}#{}#{}#{}#{}".format(
+            "kodeproduk",
+            "namavoucher",
+            "#".join(filtered_lines),
+            "harga",
+            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        )
+
+        # Save the template to a file
+        with open("template.txt", "w", encoding="utf-8") as file:
+            file.write(template)
 
         return gdoc_file_id
 

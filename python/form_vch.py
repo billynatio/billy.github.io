@@ -8,7 +8,7 @@ import time
 
 vch_folder_path = r"C:\Users\cahayabaru\Desktop\voucher scan\automation"
 
-def run_epson_scan(kode_voucher, waktu_sekarang):
+def run_epson_scan(kode_produk, waktu_sekarang):
     # Mulai aplikasi Epson Scan
     app_epson = Application(backend="uia").start(r"C:\Windows\twain_32\escndv\escndv.exe")
 
@@ -38,7 +38,7 @@ def run_epson_scan(kode_voucher, waktu_sekarang):
     window_save_settings.wait("exists", timeout=10)  # Sesuaikan waktu tunggu jika diperlukan
 
     # Tetapkan nama awalan sebagai kode voucher dan waktu saat ini
-    prefix_name = kode_voucher + " " + waktu_sekarang.strftime("%d_%m_%Y %H-%M") + " "
+    prefix_name = kode_produk + " " + waktu_sekarang.strftime("%d_%m_%Y %H-%M") + " "
     edit_prefix = window_save_settings.child_window(auto_id="1202", control_type="Edit")
     edit_prefix.set_text(prefix_name)
 
@@ -76,7 +76,7 @@ def run_epson_scan(kode_voucher, waktu_sekarang):
 def submit_form():
     # Mendapatkan nilai input dari field
     nama_voucher = entry_nama_voucher.get()
-    kode_voucher = entry_kode_voucher.get()
+    kode_produk = entry_kode_produk.get()
     harga = entry_harga.get()
     digipos = entry_digipos.get()
     user = entry_user.get()
@@ -84,7 +84,7 @@ def submit_form():
 
     # Menampilkan nilai input
     print("Nama Voucher:", nama_voucher)
-    print("Kode Voucher:", kode_voucher)
+    print("Kode Voucher:", kode_produk)
     print("Harga:", harga)
     print("Digipos:", digipos)
     print("Jumlah Voucher:", jumlah_voucher)
@@ -98,8 +98,8 @@ def submit_form():
     empty_fields = []
     if not nama_voucher:
         empty_fields.append("Nama Voucher")
-    if not kode_voucher:
-        empty_fields.append("Kode Voucher")
+    if not kode_produk:
+        empty_fields.append("Kode Produk")
     if not harga:
         empty_fields.append("Harga")
     if not digipos:
@@ -120,16 +120,16 @@ def submit_form():
     if confirm:
         # Mengosongkan field input
         entry_nama_voucher.delete(0, tk.END)
-        entry_kode_voucher.delete(0, tk.END)
+        entry_kode_produk.delete(0, tk.END)
         entry_harga.delete(0, tk.END)
         entry_digipos.delete(0, tk.END)
         entry_user.delete(0, tk.END)
         entry_jumlah_voucher.delete(0, tk.END)
 
         # Panggil fungsi run_epson_scan di latar belakang
-        kode_voucher = entry_kode_voucher.get()
+        kode_produk = entry_kode_produk.get()
         waktu_sekarang = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-        Desktop(backend="uia").start(run_epson_scan, args=(kode_voucher, waktu_sekarang))
+        Desktop(backend="uia").start(run_epson_scan, args=(kode_produk, waktu_sekarang))
         time.sleep(2)  # Tunggu sebentar agar Epson Scan dapat dijalankan
 
     else:
@@ -148,7 +148,7 @@ def validate_numeric_input(event):
 def validate_fields():
     # Mendapatkan nilai input dari setiap field
     nama_voucher = entry_nama_voucher.get()
-    kode_voucher = entry_kode_voucher.get()
+    kode_produk = entry_kode_produk.get()
     harga = entry_harga.get()
     digipos = entry_digipos.get()
     user = entry_user.get()
@@ -161,7 +161,7 @@ def validate_fields():
             return False
 
     # Kembalikan True jika semua field telah terisi dan validasi angka berhasil, False jika ada yang kosong atau tidak valid
-    return all([nama_voucher, kode_voucher, harga, digipos, user, jumlah_voucher])
+    return all([nama_voucher, kode_produk, harga, digipos, user, jumlah_voucher])
 
 
 # Membuat window Tkinter
@@ -177,8 +177,8 @@ entry_nama_voucher.grid(row=0, column=1)
 # Membuat label dan field untuk Kode Voucher
 label_kode_voucher = tk.Label(window, text="Kode Voucher:")
 label_kode_voucher.grid(row=1, column=0, sticky="W")
-entry_kode_voucher = tk.Entry(window)
-entry_kode_voucher.grid(row=1, column=1)
+entry_kode_produk = tk.Entry(window)
+entry_kode_produk.grid(row=1, column=1)
 
 # Membuat label dan field untuk Harga
 label_harga = tk.Label(window, text="Harga:")
