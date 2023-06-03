@@ -1,5 +1,6 @@
 from mimetypes import MimeTypes
 import os
+from pdb import run
 import pydrive2
 from Google import Create_Service
 from googleapiclient.discovery import build
@@ -14,15 +15,15 @@ SCOPES = ["https://www.googleapis.com/auth/drive",
 service_drive = Create_Service(CLIENT_SECRET_FILE, "drive", "v3", "https://www.googleapis.com/auth/drive")
 service_doc = Create_Service(CLIENT_SECRET_FILE,"docs", "v1",["https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/documents"],)
 
-# lokasi hasil scan voucher
-pdf_path = r"C:\Users\Billy\Downloads\img284.pdf"
-# lokasi export txt file
-txt_path = r"C:\Users\Billy\Downloads\img284.txt"
-# Lokasi txt file sudah difilter
-filtered_text_path = r"C:\Users\Billy\Downloads\img284.txt"
 
 # Fungsi untuk mengonversi file PDF menjadi Google Docs (GDoc)
-def convert_pdf_to_txt(pdf_path: str, parents: list = None):
+def vch_txt(pdf_path: str, parents: list = None):
+    
+    # lokasi export txt file
+    txt_path = r"C:\Users\Billy\Downloads\img284.txt"
+    # Lokasi txt file sudah difilter
+    filtered_text_path = r"C:\Users\Billy\Downloads\img284.txt"
+    
     # Membuat metadata file PDF
     file_metadata = {
         "name": os.path.basename(pdf_path),
@@ -87,6 +88,6 @@ def filter_text(txt_path: str):
     os.rename(temp_path, txt_path)
 
 # Konversi PDF menjadi GDoc
-convert_pdf_to_txt(pdf_path, txt_path)
+vch_txt(pdf_path, txt_path)
 # filter file txt
 filter_text(txt_path)
