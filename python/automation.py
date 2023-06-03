@@ -3,7 +3,7 @@ import time
 import os
 from vch_temp_singkat import vch_txt
 
-def run_epson_scan(kode_voucher, waktu_sekarang):
+def run_epson_scan(nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, waktu):
     vch_folder_path = r"C:\Users\cahayabaru\Desktop\voucher_scan\automation"
     try:
         # Mulai aplikasi Epson Scan
@@ -31,7 +31,7 @@ def run_epson_scan(kode_voucher, waktu_sekarang):
         window_save_settings.wait("exists", timeout=10)
 
         # Tetapkan nama awalan sebagai kode voucher dan waktu saat ini
-        prefix_name = kode_voucher + " " + waktu_sekarang.replace(" ", "_").replace(":", "-") + " "
+        prefix_name = kode_voucher + " " + waktu.replace(" ", "_").replace(":", "-") + " "
         edit_prefix = window_save_settings.child_window(auto_id="1202", control_type="Edit")
         edit_prefix.set_text(prefix_name)
 
@@ -70,7 +70,7 @@ def run_epson_scan(kode_voucher, waktu_sekarang):
             os.rename(file_path, pdf_path)
             print("-Berhasil mengubah nama file")
             # Jalankan fungsi vch_txt untuk mengonversi PDF menjadi Google Docs dan menyaring teks
-            vch_txt(pdf_path, txt_path)  # Replace 'txt_path' with the desired output text path
+            vch_txt(pdf_path, txt_path, nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, waktu)  # Replace 'txt_path' with the desired output text path
             return pdf_path
         else:
             return None

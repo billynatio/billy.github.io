@@ -7,15 +7,7 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2 import service_account
 
-CLIENT_SECRET_FILE = ("credentials.json")
-SCOPES = ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/documents"]
-
-# Layanan API
-service_drive = Create_Service(CLIENT_SECRET_FILE, "drive", "v3", "https://www.googleapis.com/auth/drive")
-service_doc = Create_Service(CLIENT_SECRET_FILE, "docs", "v1", ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/documents"])
-
-
-def vch_txt(pdf_path: str, txt_path: str):
+def vch_txt(pdf_path: str, txt_path: str, nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, waktu):
     try:
         # Membuat metadata file PDF
         file_metadata = {
@@ -75,11 +67,11 @@ def vch_txt(pdf_path: str, txt_path: str):
         
         # Create the template using the filtered data
         template = "{}#{}#{}#{}#{}".format(
-            "kodeproduk",
-            "namavoucher",
+            kode_voucher,
+            nama_voucher,
             "#".join(filtered_lines),
-            "harga",
-            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            harga,
+            waktu,
         )
 
         # Save the template to a file

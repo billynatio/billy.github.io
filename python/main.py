@@ -16,7 +16,7 @@ def submit_form():
     digipos = entry_digipos.get()
     user = entry_user.get()
     jumlah_voucher = entry_jumlah_voucher.get()
-    waktu_sekarang = datetime.now().strftime("%d-%m-%Y %H:%M")
+    waktu = datetime.now().strftime("%d-%m-%Y %H:%M")
 
     # Menampilkan nilai input
     print("Nama Voucher:", nama_voucher)
@@ -25,7 +25,7 @@ def submit_form():
     print("Digipos:", digipos)
     print("Jumlah Voucher:", jumlah_voucher)
     print("User:", user)
-    print("Waktu:", waktu_sekarang)
+    print("Waktu:", waktu)
 
     # Cek field yang belum diisi
     empty_fields = []
@@ -53,7 +53,7 @@ def submit_form():
     if confirm:
         # Panggil fungsi run_epson_scan di latar belakang
         kode_voucher = entry_kode_voucher.get()
-        run_epson_scan(kode_voucher, waktu_sekarang)
+        run_epson_scan(nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, waktu)
         time.sleep(2)  # Tunggu sebentar agar Epson Scan dapat dijalankan
         
         # Mengosongkan field input
@@ -139,10 +139,10 @@ entry_user = tk.Entry(window)
 entry_user.grid(row=5, column=1)
 
 # Mendapatkan waktu sekarang
-waktu_sekarang = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+waktu = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
 # Membuat label untuk waktu sekarang di sudut kanan bawah
-label_waktu = tk.Label(window, text=waktu_sekarang)
+label_waktu = tk.Label(window, text=waktu)
 label_waktu.grid(row=7, column=1, sticky="SE")
 
 # Membuat tombol Simpan
