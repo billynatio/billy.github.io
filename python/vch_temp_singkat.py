@@ -57,33 +57,23 @@ def vch_txt(pdf_path: str, txt_path: str, nama_voucher, kode_voucher, harga, dig
             numbers = "".join(filter(str.isdigit, line))
             if len(numbers) == 17:
                 filtered_lines.append(numbers)
-
-        # Save the filtered data to a temporary file
-        temp_path = txt_path + ".temp"
-        with open(temp_path, "w", encoding="utf-8") as file:
-            for line in filtered_lines:
-                file.write(line + "\n")
-
-        # Rename the temporary file with "filtered_" prefix
+                
+        # Format data yang disaring
+        formatted_data = "{}#{}#{}#{}#{}".format(
+            kode_voucher, nama_voucher, "#".join(filtered_lines), harga, waktu)
+        
+        # Menulis data yang diformat ke file teks
+        with open(txt_path, "w", encoding="utf-8") as file:
+            file.write(formatted_data)
+        
+        # Rename the file with "filtered_" prefix
         filtered_txt_path = "filtered_" + os.path.basename(txt_path)
-        os.rename(temp_path, filtered_txt_path)
+        os.rename(txt_path, filtered_txt_path)
+        txt_path = filtered_txt_path
 
-        # Create the template using the filtered data
-        template = "{}#{}#{}#{}#{}".format(
-            kode_voucher,
-            nama_voucher,
-            "#".join(filtered_lines),
-            harga,
-            waktu
-        )
-
-        # Save the template to a file
-        with open("template.txt", "w", encoding="utf-8") as file:
-            file.write(template)
-            print("- Berhasil mendapatkan data dengan format voucher!")
-
-        return gdoc_file_id
+        print("Data yang diformat telah disimpan di:", txt_path)
 
     except Exception as e:
         print("Terjadi kesalahan saat mengonversi PDF menjadi GDoc dan menyaring teks:", str(e))
-        return None
+
+
