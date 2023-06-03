@@ -81,4 +81,4 @@ def vch_txt(pdf_path: str, txt_path: str):
 
 
 # Konversi PDF menjadi GDoc dan saring teks
-vch_txt(pdf_path, txt_path)
+vch_txt()
