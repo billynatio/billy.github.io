@@ -1,4 +1,4 @@
-from pywinauto import Application, Desktop
+from pywinauto import Application, Desktop, keyboard
 import time
 import os
 from vch_temp_singkat import vch_txt
@@ -28,6 +28,31 @@ def run_epson_scan(nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, w
 
         # Tunggu hingga dialog "Save Settings" muncul
         window_save_settings = window_epson.window(title="File Save Settings")
+        window_save_settings.wait("exists", timeout=10)
+
+         # Pilih radio button "Others" dalam dialog "File Save Settings"
+        radio_others = window_save_settings.child_window(auto_id="1186", control_type="RadioButton")
+        radio_others.set_focus()
+        radio_others.click_input()
+
+        # Tunggu hingga dialog "Browse For Folder" muncul
+        button_browse = window_save_settings.child_window(auto_id="1002", control_type="Button")
+        button_browse.click()
+        window_browse_folder = window_epson.window(title="Browse For Folder")
+        window_browse_folder.wait("exists", timeout=10)
+
+
+       # Set path folder tujuan (misalnya desktop\voucher_scan\automation)
+        folder_path = r"C:\Users\cahayabaru\Desktop\voucher_scan\automation"
+        edit_folder_path = window_browse_folder.child_window(auto_id="1148", control_type="Edit")
+        edit_folder_path.set_keyboard_focus()
+        keyboard.send_keys(folder_path)
+        
+        # Klik tombol "OK" dalam dialog "Browse For Folder"
+        button_ok_browse_folder = window_browse_folder.child_window(auto_id="1",title="OK", control_type="Button")
+        button_ok_browse_folder.click()
+
+        # Tunggu hingga dialog "File Save Settings" muncul kembali
         window_save_settings.wait("exists", timeout=10)
 
         # Tetapkan nama awalan sebagai kode voucher dan waktu saat ini
@@ -68,7 +93,7 @@ def run_epson_scan(nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, w
         if os.path.exists(file_path):
             # Ubah nama path file tanpa "888" dan dengan ekstensi ".pdf"
             os.rename(file_path, pdf_path)
-            print("-Berhasil mengubah nama file")
+            print("-Mengubah nama file")
             # Jalankan fungsi vch_txt untuk mengonversi PDF menjadi Google Docs dan menyaring teks
             vch_txt(pdf_path, txt_path, nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, waktu)  # Replace 'txt_path' with the desired output text path
             return pdf_path

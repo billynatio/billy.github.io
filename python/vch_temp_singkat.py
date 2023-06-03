@@ -17,6 +17,7 @@ service_doc = Create_Service(CLIENT_SECRET_FILE,"docs", "v1",["https://www.googl
 
 
 def vch_txt(pdf_path: str, txt_path: str, nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, waktu):
+    print("-Sedang mendapatkan file txt")
     try:
         # Create PDF file metadata
         file_metadata = {
@@ -58,22 +59,25 @@ def vch_txt(pdf_path: str, txt_path: str, nama_voucher, kode_voucher, harga, dig
             if len(numbers) == 17:
                 filtered_lines.append(numbers)
             
-        #format data        
+        
+        # Format data
+        print("- Memasukkan format data!")
         formatted_lines = []
-        for line in lines:
-            line = line.strip()
-            formatted_line = "{}#{}#{}#{}#{}\n".format(line, kode_voucher, nama_voucher, filtered_lines, harga, waktu)
+        for line in filtered_lines:
+            formatted_line = "{}#{}#{}#{}#{}\n".format(
+                kode_voucher, nama_voucher, line, harga, waktu)
             formatted_lines.append(formatted_line)
-            
-        # Menyimpan data yang telah difilter ke dalam file sementara
+
+        # Write formatted lines to temporary file
         temp_path = txt_path + ".temp"
         with open(temp_path, 'w', encoding='utf-8') as file:
-            for line in filtered_lines:
-                file.write(line + '\n')
+            for formatted_line in formatted_lines:
+                file.write(formatted_line)
 
-        # Mengganti file asli dengan file yang telah difilter
+        # Replace the original file with the filtered file
         os.remove(txt_path)
         os.rename(temp_path, txt_path)
+        print("- Proses selesai!")
 
 
     except Exception as e:
