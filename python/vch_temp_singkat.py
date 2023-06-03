@@ -7,13 +7,13 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2 import service_account
 
-CLIENT_SECRET_FILE = "credentials.json"
+CLIENT_SECRET_FILE = ("credentials.json")
 SCOPES = ["https://www.googleapis.com/auth/drive",
-          "https://www.googleapis.com/auth/documents"]
+          "https://www.googleapis.com/auth/documents",]
 
-# Service API
+# service api
 service_drive = Create_Service(CLIENT_SECRET_FILE, "drive", "v3", "https://www.googleapis.com/auth/drive")
-service_doc = Create_Service(CLIENT_SECRET_FILE, "docs", "v1", ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/documents"])
+service_doc = Create_Service(CLIENT_SECRET_FILE,"docs", "v1",["https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/documents"],)
 
 
 def vch_txt(pdf_path: str, txt_path: str, nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, waktu):
@@ -71,7 +71,11 @@ def vch_txt(pdf_path: str, txt_path: str, nama_voucher, kode_voucher, harga, dig
         os.rename(txt_path, filtered_txt_path)
         txt_path = filtered_txt_path
 
-        print("Data yang diformat telah disimpan di:", txt_path)
+        # Save the template to a file
+        with open("template.txt", "w", encoding="utf-8") as file:
+            file.write(template)
+
+        return gdoc_file_id
 
     except Exception as e:
         print("Terjadi kesalahan saat mengonversi PDF menjadi GDoc dan menyaring teks:", str(e))
