@@ -91,7 +91,3 @@ def vch_txt(pdf_path: str, txt_path: str):
     except Exception as e:
         print("Terjadi kesalahan saat mengonversi PDF menjadi GDoc dan menyaring teks:", str(e))
         return None
-
-
-# Konversi PDF menjadi GDoc dan saring teks
-vch_txt()
