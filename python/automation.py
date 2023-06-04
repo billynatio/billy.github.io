@@ -38,56 +38,7 @@ def run_epson_scan(nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, w
         radio_others.set_focus()
         radio_others.click_input()
 
-        # Tunggu hingga dialog "Browse For Folder" muncul
-        button_browse = window_save_settings.child_window(auto_id="1002", control_type="Button")
-        button_browse.click()
-        window_browse_folder = window_epson.window(title="Browse For Folder")
-        window_browse_folder.wait("exists", timeout=10)
-        
-        # Cari dialog "Browse For Folder" berdasarkan teks judulnya
-        dlg_browse = findwindows.find_windows(title="Browse For Folder")[0]
-        dlg_browse = app_epson.window(handle=dlg_browse)
-        
-        # Dapatkan posisi relatif dari elemen "This PC" dalam dialog "Browse For Folder"
-        this_pc = dlg_browse.child_window(title="This PC", control_type="TreeItem")
-        this_pc_rectangle = this_pc.rectangle()
-        this_pc_x = this_pc_rectangle.left + (this_pc_rectangle.width() // 2)
-        this_pc_y = this_pc_rectangle.top + (this_pc_rectangle.height() // 2)
-
-        # Klik pada posisi "This PC" menggunakan mouse virtual
-        mouse.click(coords=(this_pc_x, this_pc_y))
-
-        # Tunggu hingga jendela "This PC" terbuka
-        window_this_pc = app_epson.window(title="This PC")
-        window_this_pc.wait("exists", timeout=10)
-
-        # Dapatkan posisi relatif dari elemen "Desktop" dalam jendela "This PC"
-        desktop = window_this_pc.child_window(title="Desktop", control_type="TreeItem")
-        desktop_rectangle = desktop.rectangle()
-        desktop_x = desktop_rectangle.left + (desktop_rectangle.width() // 2)
-        desktop_y = desktop_rectangle.top + (desktop_rectangle.height() // 2)
-        
-        # Klik pada posisi "Desktop" menggunakan mouse virtual
-        mouse.click(coords=(desktop_x, desktop_y))
-        
-        # Klik pada folder "voucher_scan" menggunakan mouse virtual
-        folder_voucher_scan = window_browse_folder.child_window(title="voucher_scan", control_type="ListItem")
-        folder_voucher_scan.click_input()
-
-        # Klik pada folder "automation" menggunakan mouse virtual
-        folder_automation = window_browse_folder.child_window(title="automation", control_type="ListItem")
-        folder_automation.click_input()
-
-        # Klik tombol "OK" dalam dialog "Browse For Folder"
-        button_ok_browse_folder = window_browse_folder.child_window(title="OK", control_type="Button")
-        button_ok_browse_folder.click()
-
-        # Tunggu hingga dialog "File Save Settings" muncul kembali
-        window_save_settings.wait("exists", timeout=10)
-
-        
-
-        # Tetapkan nama awalan sebagai kode voucher dan waktu saat ini
+        # ganti nama file
         prefix_name = kode_voucher + " " + waktu.replace(" ", "_").replace(":", "-") + " "
         edit_prefix = window_save_settings.child_window(auto_id="1202", control_type="Edit")
         edit_prefix.set_text(prefix_name)
