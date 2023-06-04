@@ -40,14 +40,33 @@ def run_epson_scan(nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, w
         button_browse.click()
         window_browse_folder = window_epson.window(title="Browse For Folder")
         window_browse_folder.wait("exists", timeout=10)
-
-
-       # Set path folder tujuan (misalnya desktop\voucher_scan\automation)
-        folder_path = r"C:\Users\cahayabaru\Desktop\voucher_scan\automation"
-        edit_folder_path = window_browse_folder.child_window(auto_id="1148", control_type="Edit")
-        edit_folder_path.set_keyboard_focus()
-        keyboard.send_keys(folder_path)
         
+        # Klik tree item "This PC"
+        this_pc_item = window_browse_folder.child_window(title="This PC", control_type="TreeItem")
+        this_pc_item.click()
+
+        # Tunggu hingga sub-tree "This PC" terbuka
+        time.sleep(1)  # Adjust the delay if necessary
+
+        # Klik tree item "Desktop"
+        desktop_item = window_browse_folder.child_window(title="Desktop", control_type="TreeItem")
+        desktop_item.click()
+
+        # Klik tree item "voucher_scan"
+        voucher_scan_item = window_browse_folder.child_window(title="voucher_scan", control_type="TreeItem")
+        voucher_scan_item.click()
+
+        # Klik tree item "automation"
+        automation_item = window_browse_folder.child_window(title="automation", control_type="TreeItem")
+        automation_item.click()
+
+        # Klik tombol "OK" dalam dialog "Browse For Folder"
+        button_ok_browse_folder = window_browse_folder.child_window(auto_id="1", title="OK", control_type="Button")
+        button_ok_browse_folder.click()
+
+        # Tunggu hingga dialog "File Save Settings" muncul kembali
+        window_save_settings.wait("exists", timeout=10)
+
         # Klik tombol "OK" dalam dialog "Browse For Folder"
         button_ok_browse_folder = window_browse_folder.child_window(auto_id="1",title="OK", control_type="Button")
         button_ok_browse_folder.click()
