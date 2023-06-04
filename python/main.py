@@ -100,41 +100,42 @@ def validate_fields():
 # Membuat window Tkinter
 window = tk.Tk()
 window.title("Form Voucher")
+window.configure(bg="#F8F8F8")  # Warna latar belakang
 
 # Membuat label dan field untuk Nama Voucher
-label_nama_voucher = tk.Label(window, text="Nama Voucher:")
+label_nama_voucher = tk.Label(window, text="Nama Voucher:", bg="#F8F8F8")  # Warna latar belakang
 label_nama_voucher.grid(row=0, column=0, sticky="W")
 entry_nama_voucher = tk.Entry(window)
 entry_nama_voucher.grid(row=0, column=1)
 
 # Membuat label dan field untuk Kode Voucher
-label_kode_voucher = tk.Label(window, text="Kode Voucher:")
+label_kode_voucher = tk.Label(window, text="Kode Voucher:", bg="#F8F8F8")  # Warna latar belakang
 label_kode_voucher.grid(row=1, column=0, sticky="W")
 entry_kode_voucher = tk.Entry(window)
 entry_kode_voucher.grid(row=1, column=1)
 
 # Membuat label dan field untuk Harga
-label_harga = tk.Label(window, text="Harga:")
+label_harga = tk.Label(window, text="Harga:", bg="#F8F8F8")  # Warna latar belakang
 label_harga.grid(row=2, column=0, sticky="W")
 entry_harga = tk.Entry(window)
 entry_harga.grid(row=2, column=1)
 entry_harga.bind("<KeyPress>", validate_numeric_input)
 
-# Membuat label dan field untuk Jumlah_voucher
-label_jumlah_voucher = tk.Label(window, text="Jumlah Voucher:")
+# Membuat label dan field untuk Jumlah Voucher
+label_jumlah_voucher = tk.Label(window, text="Jumlah Voucher:", bg="#F8F8F8")  # Warna latar belakang
 label_jumlah_voucher.grid(row=3, column=0, sticky="W")
 entry_jumlah_voucher = tk.Entry(window)
 entry_jumlah_voucher.grid(row=3, column=1)
 entry_jumlah_voucher.bind("<KeyPress>", validate_numeric_input)
 
 # Membuat label dan field untuk Digipos
-label_digipos = tk.Label(window, text="Digipos:")
+label_digipos = tk.Label(window, text="Digipos:", bg="#F8F8F8")  # Warna latar belakang
 label_digipos.grid(row=4, column=0, sticky="W")
 entry_digipos = tk.Entry(window)
 entry_digipos.grid(row=4, column=1)
 
 # Membuat label dan field untuk User
-label_user = tk.Label(window, text="User:")
+label_user = tk.Label(window, text="User:", bg="#F8F8F8")  # Warna latar belakang
 label_user.grid(row=5, column=0, sticky="W")
 entry_user = tk.Entry(window)
 entry_user.grid(row=5, column=1)
@@ -143,14 +144,26 @@ entry_user.grid(row=5, column=1)
 waktu = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
 
 # Membuat label untuk waktu sekarang di sudut kanan bawah
-label_waktu = tk.Label(window, text=waktu)
-label_waktu.grid(row=7, column=1, sticky="SE")
+label_waktu = tk.Label(window, text=waktu, bg="#F8F8F8", font=("Helvetica", 10, "italic"))
+label_waktu.grid(row=6, column=1, sticky="E")
 
-# Membuat tombol Simpan
-button_simpan = tk.Button(
-    window, text="Simpan", command=lambda: validate_fields() and submit_form()
-)
-button_simpan.grid(row=6, column=0, sticky="W")
+# Membuat tombol Submit dengan gaya yang lebih modern
+submit_button = tk.Button(window, text="Submit", command=submit_form, bg="#4CAF50", fg="#FFFFFF", padx=10, pady=5,
+                          font=("Helvetica", 12, "bold"), relief="groove", activebackground="#45A049")
+submit_button.grid(row=7, column=1, pady=10)
 
-# Menjalankan event loop Tkinter
+# Memposisikan window di tengah layar
+window.update_idletasks()
+window_width = window.winfo_width()
+window_height = window.winfo_height()
+screen_width = window.winfo_screenwidth()
+screen_height = window.winfo_screenheight()
+x = int((screen_width / 2) - (window_width / 2))
+y = int((screen_height / 2) - (window_height / 2))
+window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
+# Memanggil fungsi validate_fields saat tombol Submit ditekan
+window.bind("<Return>", lambda event: submit_form() if validate_fields() else None)
+
+# Menjalankan main loop aplikasi
 window.mainloop()
