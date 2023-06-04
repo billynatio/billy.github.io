@@ -2,6 +2,7 @@ from pywinauto import Application, Desktop, keyboard
 import time
 import os
 from vch_temp_singkat import vch_txt
+import pywinauto.findwindows as findwindows
 
 def run_epson_scan(nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, waktu):
     vch_folder_path = r"C:\Users\cahayabaru\Desktop\voucher_scan\automation"
@@ -41,38 +42,25 @@ def run_epson_scan(nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, w
         window_browse_folder = window_epson.window(title="Browse For Folder")
         window_browse_folder.wait("exists", timeout=10)
         
-        # Klik tree item "This PC"
-        this_pc_item = window_browse_folder.child_window(title="This PC", control_type="TreeItem")
-        this_pc_item.click()
+        # Cari dialog "Browse For Folder" berdasarkan teks judulnya
+        dlg_browse = findwindows.find_windows(title="Browse For Folder")[0]
+        dlg_browse = app_epson.window(handle=dlg_browse)
 
-        # Tunggu hingga sub-tree "This PC" terbuka
-        time.sleep(1)  # Adjust the delay if necessary
+        # Klik tree item "This PC"
+        this_pc_item = dlg_browse.child_window(control_type="TreeItem", depth=1)
+        this_pc_item.click_input()
 
         # Klik tree item "Desktop"
-        desktop_item = window_browse_folder.child_window(title="Desktop", control_type="TreeItem")
-        desktop_item.click()
+        desktop_item = this_pc_item.child_window(title="Desktop", control_type="TreeItem")
+        desktop_item.click_input()
 
         # Klik tree item "voucher_scan"
-        voucher_scan_item = window_browse_folder.child_window(title="voucher_scan", control_type="TreeItem")
-        voucher_scan_item.click()
+        voucher_scan_item = desktop_item.child_window(title="voucher_scan", control_type="TreeItem")
+        voucher_scan_item.click_input()
 
         # Klik tree item "automation"
-        automation_item = window_browse_folder.child_window(title="automation", control_type="TreeItem")
-        automation_item.click()
-
-        # Klik tombol "OK" dalam dialog "Browse For Folder"
-        button_ok_browse_folder = window_browse_folder.child_window(auto_id="1", title="OK", control_type="Button")
-        button_ok_browse_folder.click()
-
-        # Tunggu hingga dialog "File Save Settings" muncul kembali
-        window_save_settings.wait("exists", timeout=10)
-
-        # Klik tombol "OK" dalam dialog "Browse For Folder"
-        button_ok_browse_folder = window_browse_folder.child_window(auto_id="1",title="OK", control_type="Button")
-        button_ok_browse_folder.click()
-
-        # Tunggu hingga dialog "File Save Settings" muncul kembali
-        window_save_settings.wait("exists", timeout=10)
+        automation_item = voucher_scan_item.child_window(title="automation", control_type="TreeItem")
+        automation_item.click_input()
 
         # Tetapkan nama awalan sebagai kode voucher dan waktu saat ini
         prefix_name = kode_voucher + " " + waktu.replace(" ", "_").replace(":", "-") + " "

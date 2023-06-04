@@ -8,6 +8,7 @@ import time
 from automation import run_epson_scan
 from vch_temp_singkat import vch_txt
 
+
 def submit_form():
     # Mendapatkan nilai input dari field
     nama_voucher = entry_nama_voucher.get()
