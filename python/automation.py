@@ -3,6 +3,8 @@ import time
 import os
 from vch_temp_singkat import vch_txt
 import pywinauto.findwindows as findwindows
+from pywinauto import mouse
+
 
 def run_epson_scan(nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, waktu):
     vch_folder_path = r"C:\Users\cahayabaru\Desktop\voucher_scan\automation"
@@ -45,22 +47,45 @@ def run_epson_scan(nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, w
         # Cari dialog "Browse For Folder" berdasarkan teks judulnya
         dlg_browse = findwindows.find_windows(title="Browse For Folder")[0]
         dlg_browse = app_epson.window(handle=dlg_browse)
+        
+        # Dapatkan posisi relatif dari elemen "This PC" dalam dialog "Browse For Folder"
+        this_pc = dlg_browse.child_window(title="This PC", control_type="TreeItem")
+        this_pc_rectangle = this_pc.rectangle()
+        this_pc_x = this_pc_rectangle.left + (this_pc_rectangle.width() // 2)
+        this_pc_y = this_pc_rectangle.top + (this_pc_rectangle.height() // 2)
 
-        # Klik tree item "This PC"
-        this_pc_item = dlg_browse.child_window(control_type="TreeItem", depth=1)
-        this_pc_item.click_input()
+        # Klik pada posisi "This PC" menggunakan mouse virtual
+        mouse.click(coords=(this_pc_x, this_pc_y))
 
-        # Klik tree item "Desktop"
-        desktop_item = this_pc_item.child_window(title="Desktop", control_type="TreeItem")
-        desktop_item.click_input()
+        # Tunggu hingga jendela "This PC" terbuka
+        window_this_pc = app_epson.window(title="This PC")
+        window_this_pc.wait("exists", timeout=10)
 
-        # Klik tree item "voucher_scan"
-        voucher_scan_item = desktop_item.child_window(title="voucher_scan", control_type="TreeItem")
-        voucher_scan_item.click_input()
+        # Dapatkan posisi relatif dari elemen "Desktop" dalam jendela "This PC"
+        desktop = window_this_pc.child_window(title="Desktop", control_type="TreeItem")
+        desktop_rectangle = desktop.rectangle()
+        desktop_x = desktop_rectangle.left + (desktop_rectangle.width() // 2)
+        desktop_y = desktop_rectangle.top + (desktop_rectangle.height() // 2)
+        
+        # Klik pada posisi "Desktop" menggunakan mouse virtual
+        mouse.click(coords=(desktop_x, desktop_y))
+        
+        # Klik pada folder "voucher_scan" menggunakan mouse virtual
+        folder_voucher_scan = window_browse_folder.child_window(title="voucher_scan", control_type="ListItem")
+        folder_voucher_scan.click_input()
 
-        # Klik tree item "automation"
-        automation_item = voucher_scan_item.child_window(title="automation", control_type="TreeItem")
-        automation_item.click_input()
+        # Klik pada folder "automation" menggunakan mouse virtual
+        folder_automation = window_browse_folder.child_window(title="automation", control_type="ListItem")
+        folder_automation.click_input()
+
+        # Klik tombol "OK" dalam dialog "Browse For Folder"
+        button_ok_browse_folder = window_browse_folder.child_window(title="OK", control_type="Button")
+        button_ok_browse_folder.click()
+
+        # Tunggu hingga dialog "File Save Settings" muncul kembali
+        window_save_settings.wait("exists", timeout=10)
+
+        
 
         # Tetapkan nama awalan sebagai kode voucher dan waktu saat ini
         prefix_name = kode_voucher + " " + waktu.replace(" ", "_").replace(":", "-") + " "
