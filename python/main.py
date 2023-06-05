@@ -105,52 +105,61 @@ window.title("Form Voucher")
 window.geometry("500x500")
 window.resizable(False, False)
 
-# Menerapkan tema menggunakan ttkbootstrap
-style = Style(theme="journal")
+# Menerapkan tema menggunakan ttkbootstrap dengan tema "cosmo"
+style = Style(theme="cosmo")
 
 # Membuat frame utama
-frame = tk.Frame(window)
-frame.pack(padx=20, pady=20)
+frame = ttk.Frame(window, padding="20")
+frame.pack(fill="both", expand=True)
+
+# Mengubah ukuran dan jenis font label menggunakan font Nunito
+style.configure("TLabel", font=("robonto", 13, "bold"))
 
 # Membuat label dan field untuk Nama Voucher
-label_nama_voucher = tk.Label(frame, text="Nama Voucher")
-label_nama_voucher.pack(anchor="w", padx=10, pady=5)
-entry_nama_voucher = tk.Entry(frame, justify="right")
-entry_nama_voucher.pack(anchor="e", padx=10, pady=5)
+label_nama_voucher = ttk.Label(frame, text="Nama Voucher")
+label_nama_voucher.grid(row=0, column=0, padx=10, pady=5, sticky="e")
+entry_nama_voucher = ttk.Entry(frame, width=15)  # Ubah ukuran lebar menjadi setengahnya
+entry_nama_voucher.grid(row=0, column=1, padx=10, pady=5, sticky="w")
 
 # Membuat label dan field untuk Kode Voucher
-label_kode_voucher = tk.Label(frame, text="Kode Voucher")
-label_kode_voucher.pack(anchor="w", padx=10, pady=5)
-entry_kode_voucher = tk.Entry(frame, justify="right")
-entry_kode_voucher.pack(anchor="e", padx=10, pady=5)
+label_kode_voucher = ttk.Label(frame, text="Kode Voucher")
+label_kode_voucher.grid(row=1, column=0, padx=10, pady=5, sticky="e")
+entry_kode_voucher = ttk.Entry(frame, width=15)  # Ubah ukuran lebar menjadi setengahnya
+entry_kode_voucher.grid(row=1, column=1, padx=10, pady=5, sticky="w")
 
 # Membuat label dan field untuk Harga
-label_harga = tk.Label(frame, text="Harga")
-label_harga.pack(anchor="w", padx=10, pady=5)
-entry_harga = tk.Entry(frame, justify="right")
-entry_harga.pack(anchor="e", padx=10, pady=5)
+label_harga = ttk.Label(frame, text="Harga")
+label_harga.grid(row=2, column=0, padx=10, pady=5, sticky="e")
+entry_harga = ttk.Entry(frame, width=15)  # Ubah ukuran lebar menjadi setengahnya
+entry_harga.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 
 # Membuat label dan field untuk Digipos
-label_digipos = tk.Label(frame, text="Digipos")
-label_digipos.pack(anchor="w", padx=10, pady=5)
-entry_digipos = tk.Entry(frame, justify="right")
-entry_digipos.pack(anchor="e", padx=10, pady=5)
+label_digipos = ttk.Label(frame, text="Digipos")
+label_digipos.grid(row=3, column=0, padx=10, pady=5, sticky="e")
+entry_digipos = ttk.Entry(frame, width=15)  # Ubah ukuran lebar menjadi setengahnya
+entry_digipos.grid(row=3, column=1, padx=10, pady=5, sticky="w")
 
 # Membuat label dan field untuk User
-label_user = tk.Label(frame, text="User")
-label_user.pack(anchor="w", padx=10, pady=5)
-entry_user = tk.Entry(frame, justify="right")
-entry_user.pack(anchor="e", padx=10, pady=5)
+label_user = ttk.Label(frame, text="User")
+label_user.grid(row=4, column=0, padx=10, pady=5, sticky="e")
+entry_user = ttk.Entry(frame, width=15)  # Ubah ukuran lebar menjadi setengahnya
+entry_user.grid(row=4, column=1, padx=10, pady=5, sticky="w")
 
 # Membuat label dan field untuk Jumlah Voucher
-label_jumlah_voucher = tk.Label(frame, text="Jumlah Voucher")
-label_jumlah_voucher.pack(anchor="w", padx=10, pady=5)
-entry_jumlah_voucher = tk.Entry(frame, justify="right")
-entry_jumlah_voucher.pack(anchor="e", padx=10, pady=5)
+label_jumlah_voucher = ttk.Label(frame, text="Jumlah Voucher")
+label_jumlah_voucher.grid(row=5, column=0, padx=10, pady=5, sticky="e")
+entry_jumlah_voucher = ttk.Entry(frame, width=15)  # Ubah ukuran lebar menjadi setengahnya
+entry_jumlah_voucher.grid(row=5, column=1, padx=10, pady=5, sticky="w")
 
-# Membuat tombol Simpan
-button_simpan = tk.Button(frame, text="Simpan", command=submit_form)
-button_simpan.pack(pady=20)
+# Mengubah bentuk ujung kotak field menjadi berbentuk bulat
+style.configure("TEntry", relief="solid", bordercolor="#ccc", borderwidth=0, padding=8, foreground="#333", font=("Nunito", 12), fieldbackground="#fff", radius=20)
+
+# Membuat tombol Simpan dengan ujung bulat
+button_simpan = ttk.Button(frame, text="Simpan", command=submit_form, style="primary.TButton")
+button_simpan.grid(row=6, column=0, columnspan=2, pady=20)
+
+# Menempatkan frame di tengah window
+frame.place(relx=0.5, rely=0.5, anchor="center")
 
 # Menjalankan event loop Tkinter
 window.mainloop()
