@@ -2,6 +2,8 @@ import os
 from datetime import datetime
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import ttk
+from ttkbootstrap import Style
 from turtle import title
 from pywinauto import Application, Desktop
 import time
@@ -54,9 +56,11 @@ def submit_form():
     if confirm:
         # Panggil fungsi run_epson_scan di latar belakang
         kode_voucher = entry_kode_voucher.get()
-        run_epson_scan(nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, waktu)
+        run_epson_scan(
+            nama_voucher, kode_voucher, harga, digipos, jumlah_voucher, waktu
+        )
         time.sleep(2)  # Tunggu sebentar agar Epson Scan dapat dijalankan
-        
+
         # Mengosongkan field input
         entry_nama_voucher.delete(0, tk.END)
         entry_kode_voucher.delete(0, tk.END)
@@ -96,74 +100,57 @@ def validate_fields():
     # Kembalikan True jika semua field telah terisi dan validasi angka berhasil, False jika ada yang kosong atau tidak valid
     return all([nama_voucher, kode_voucher, harga, digipos, user, jumlah_voucher])
 
-
-# Membuat window Tkinter
 window = tk.Tk()
 window.title("Form Voucher")
-window.configure(bg="#F8F8F8")  # Warna latar belakang
+window.geometry("500x500")
+window.resizable(False, False)
+
+# Menerapkan tema menggunakan ttkbootstrap
+style = Style(theme="journal")
+
+# Membuat frame utama
+frame = tk.Frame(window)
+frame.pack(padx=20, pady=20)
 
 # Membuat label dan field untuk Nama Voucher
-label_nama_voucher = tk.Label(window, text="Nama Voucher:", bg="#F8F8F8")  # Warna latar belakang
-label_nama_voucher.grid(row=0, column=0, sticky="W")
-entry_nama_voucher = tk.Entry(window)
-entry_nama_voucher.grid(row=0, column=1)
+label_nama_voucher = tk.Label(frame, text="Nama Voucher")
+label_nama_voucher.pack(anchor="w", padx=10, pady=5)
+entry_nama_voucher = tk.Entry(frame, justify="right")
+entry_nama_voucher.pack(anchor="e", padx=10, pady=5)
 
 # Membuat label dan field untuk Kode Voucher
-label_kode_voucher = tk.Label(window, text="Kode Voucher:", bg="#F8F8F8")  # Warna latar belakang
-label_kode_voucher.grid(row=1, column=0, sticky="W")
-entry_kode_voucher = tk.Entry(window)
-entry_kode_voucher.grid(row=1, column=1)
+label_kode_voucher = tk.Label(frame, text="Kode Voucher")
+label_kode_voucher.pack(anchor="w", padx=10, pady=5)
+entry_kode_voucher = tk.Entry(frame, justify="right")
+entry_kode_voucher.pack(anchor="e", padx=10, pady=5)
 
 # Membuat label dan field untuk Harga
-label_harga = tk.Label(window, text="Harga:", bg="#F8F8F8")  # Warna latar belakang
-label_harga.grid(row=2, column=0, sticky="W")
-entry_harga = tk.Entry(window)
-entry_harga.grid(row=2, column=1)
-entry_harga.bind("<KeyPress>", validate_numeric_input)
-
-# Membuat label dan field untuk Jumlah Voucher
-label_jumlah_voucher = tk.Label(window, text="Jumlah Voucher:", bg="#F8F8F8")  # Warna latar belakang
-label_jumlah_voucher.grid(row=3, column=0, sticky="W")
-entry_jumlah_voucher = tk.Entry(window)
-entry_jumlah_voucher.grid(row=3, column=1)
-entry_jumlah_voucher.bind("<KeyPress>", validate_numeric_input)
+label_harga = tk.Label(frame, text="Harga")
+label_harga.pack(anchor="w", padx=10, pady=5)
+entry_harga = tk.Entry(frame, justify="right")
+entry_harga.pack(anchor="e", padx=10, pady=5)
 
 # Membuat label dan field untuk Digipos
-label_digipos = tk.Label(window, text="Digipos:", bg="#F8F8F8")  # Warna latar belakang
-label_digipos.grid(row=4, column=0, sticky="W")
-entry_digipos = tk.Entry(window)
-entry_digipos.grid(row=4, column=1)
+label_digipos = tk.Label(frame, text="Digipos")
+label_digipos.pack(anchor="w", padx=10, pady=5)
+entry_digipos = tk.Entry(frame, justify="right")
+entry_digipos.pack(anchor="e", padx=10, pady=5)
 
 # Membuat label dan field untuk User
-label_user = tk.Label(window, text="User:", bg="#F8F8F8")  # Warna latar belakang
-label_user.grid(row=5, column=0, sticky="W")
-entry_user = tk.Entry(window)
-entry_user.grid(row=5, column=1)
+label_user = tk.Label(frame, text="User")
+label_user.pack(anchor="w", padx=10, pady=5)
+entry_user = tk.Entry(frame, justify="right")
+entry_user.pack(anchor="e", padx=10, pady=5)
 
-# Mendapatkan waktu sekarang
-waktu = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+# Membuat label dan field untuk Jumlah Voucher
+label_jumlah_voucher = tk.Label(frame, text="Jumlah Voucher")
+label_jumlah_voucher.pack(anchor="w", padx=10, pady=5)
+entry_jumlah_voucher = tk.Entry(frame, justify="right")
+entry_jumlah_voucher.pack(anchor="e", padx=10, pady=5)
 
-# Membuat label untuk waktu sekarang di sudut kanan bawah
-label_waktu = tk.Label(window, text=waktu, bg="#F8F8F8", font=("Helvetica", 10, "italic"))
-label_waktu.grid(row=6, column=1, sticky="E")
+# Membuat tombol Simpan
+button_simpan = tk.Button(frame, text="Simpan", command=submit_form)
+button_simpan.pack(pady=20)
 
-# Membuat tombol Submit dengan gaya yang lebih modern
-submit_button = tk.Button(window, text="Submit", command=submit_form, bg="#4CAF50", fg="#FFFFFF", padx=10, pady=5,
-                          font=("Helvetica", 12, "bold"), relief="groove", activebackground="#45A049")
-submit_button.grid(row=7, column=1, pady=10)
-
-# Memposisikan window di tengah layar
-window.update_idletasks()
-window_width = window.winfo_width()
-window_height = window.winfo_height()
-screen_width = window.winfo_screenwidth()
-screen_height = window.winfo_screenheight()
-x = int((screen_width / 2) - (window_width / 2))
-y = int((screen_height / 2) - (window_height / 2))
-window.geometry(f"{window_width}x{window_height}+{x}+{y}")
-
-# Memanggil fungsi validate_fields saat tombol Submit ditekan
-window.bind("<Return>", lambda event: submit_form() if validate_fields() else None)
-
-# Menjalankan main loop aplikasi
+# Menjalankan event loop Tkinter
 window.mainloop()
